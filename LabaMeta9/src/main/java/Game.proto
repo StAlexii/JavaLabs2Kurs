@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_package = "com.game.network";
+option java_outer_classname = "GameProtocol";
+
+message GameMessage {
+  enum CommandType {
+    REGISTER = 0;
+    HINT = 1;
+    GUESS = 2;
+    REVEAL = 3;
+    INBOX = 4;
+  }
+
+  CommandType command = 1;
+  string sender = 2;     // Для REGISTER и GUESS
+  string target = 3;     // Кому адресована подсказка
+  string text = 4;       // Текст подсказки или догадки
+}

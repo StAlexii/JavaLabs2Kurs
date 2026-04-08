@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="BOTTOM_CENTER" prefHeight="510.0" prefWidth="342.0" spacing="20.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.labameta3.Laba3Controller">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <HBox prefHeight="0.0" prefWidth="302.0" />
+      <ImageView fx:id="mainImageView" fitHeight="356.0" fitWidth="269.0" pickOnBounds="true" preserveRatio="true" />
+      <ComboBox fx:id="filterCombo" prefHeight="25.0" prefWidth="62.0" />
+      <HBox alignment="CENTER" prefHeight="47.0" prefWidth="228.0">
+         <children>
+            <Button fx:id="butFirst" mnemonicParsing="false" onAction="#handleFirst" text="&lt;&lt;" />
+            <Button fx:id="butPrev" mnemonicParsing="false" onAction="#handlePreview" text="&lt;" />
+            <Label fx:id="counterLabel" alignment="CENTER" contentDisplay="RIGHT" prefHeight="35.0" prefWidth="53.0" text="0 из 0" />
+            <Button fx:id="butNext" mnemonicParsing="false" onAction="#handleNext" text="&gt;" />
+            <Button fx:id="butLast" mnemonicParsing="false" onAction="#handleLast" text="&gt;&gt;" />
+            <Button fx:id="auto" mnemonicParsing="false" onAction="#handleAutoAction" text="Авто" />
+            <Button fx:id="prop" mnemonicParsing="false" onAction="#handleInfo" text="Инфо" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

@@ -14,20 +14,19 @@ public class Laba2Controller {
     @FXML private Pane gamePane;
     @FXML private Circle ball;
 
-    @FXML private BallModel model;
+    @FXML private GameModel model;
     @FXML private AnimationTimer timer;
 
     @FXML private boolean paused = false;
 
     @FXML private Label scoreLabel;
-
     @FXML private Label pauseLabel;
 
     private IntegerProperty score = new SimpleIntegerProperty(0);
 
     public void initialize() {
 
-        model = new BallModel(100, 100, ball.getRadius());
+        model = new GameModel(100, 100, ball.getRadius());
         // Шарик в центре панели
         ball.centerXProperty().bind(model.xProperty());
         ball.centerYProperty().bind(model.yProperty());
@@ -59,7 +58,6 @@ public class Laba2Controller {
             }
         });
 
-        // --- Наведение = замедление ---
         ball.setOnMouseEntered(event -> model.slowDown());
 
         ball.setOnMouseExited(event -> model.normalSpeed());

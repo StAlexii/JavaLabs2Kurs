@@ -43,7 +43,7 @@ public class Peer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Peer peer = (Peer) o;
-        return port == peer.port && ip.equals(peer.ip);
+        return port == peer.port && Objects.equals(ip, peer.ip);
     }
 
     @Override
@@ -51,11 +51,9 @@ public class Peer {
         return Objects.hash(ip, port);
     }
 
-
     @Override
     public String toString() {
-        String status = isOnline ? "● ONLINE" : "○ OFFLINE";
-        return String.format("%s %s (%s:%d)", status, nickname, ip, port);
+        return nickname + " (" + ip + ":" + port + ")";
     }
 
 

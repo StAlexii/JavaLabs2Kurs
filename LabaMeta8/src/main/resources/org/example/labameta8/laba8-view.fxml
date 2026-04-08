@@ -40,5 +40,4 @@
          <TextField fx:id="UserPort" />
       </children>
    </HBox>
-   <Button fx:id="TestBtn" mnemonicParsing="false" onAction="#onManualCallClick" prefHeight="46.0" prefWidth="144.0" text="Позвонить по ip" />
 </VBox>

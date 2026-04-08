@@ -38,32 +38,42 @@ public class Laba8Controller {
     }
 
     // 1. Метод для запуска звонка (исправлен)
-    private void initiateCall(String ip, int port, String name) {
-        if (isConnected) return;
-
+    private void initiateCall(String remoteIp, int remotePort) {
         new Thread(() -> {
-            try (Socket socket = new Socket(ip, port);
-                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+            try (Socket socket = new Socket()) {
+                // Устанавливаем таймаут, чтобы программа не зависла на минуту
+                socket.connect(new InetSocketAddress(remoteIp, remotePort), 3000);
 
-                // Шлем сигнал и СВОЙ IP (чтобы нам могли ответить звуком)
-                String myIp = InetAddress.getLocalHost().getHostAddress();
-                out.println("CALL_START;" + myIp + ";" + portField.getText());
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-                Platform.runLater(() -> {
-                    statusLabel.setText("Разговор с " + name);
-                    isConnected = true;
-                });
+                // Получаем свой реальный IP в локальной сети
+                String myIp = getLocalIp();
 
-                // Запускаем звук: шлем на (порт друга + 1)
-                audioStreamer.startCall(ip, port + 1);
+                // Протокол: ТИП_КОМАНДЫ ; КТО_ЗВОНИТ ; НА_КАКОЙ_UDP_ПОРТ_ОТВЕЧАТЬ
+                out.println("CALL_START;" + myIp + ";" + (Integer.parseInt(portField.getText()) + 1));
 
-                // Запоминаем текущего собеседника для сброса
-                currentPeer = new Peer(name, ip, port);
+                Platform.runLater(() -> statusLabel.setText("Разговор с " + remoteIp));
+
+                // Сразу включаем свой звук на порт собеседника (UDP)
+                audioStreamer.startCall(remoteIp, remotePort + 1);
 
             } catch (Exception e) {
-                Platform.runLater(() -> statusLabel.setText("Ошибка: " + e.getMessage()));
+                Platform.runLater(() -> statusLabel.setText("Не удалось дозвониться: " + e.getMessage()));
             }
         }).start();
+    }
+
+    private String getLocalIp() {
+        try {
+            try (Socket socket = new Socket()) {
+                // Пытаемся "дотянуться" до внешнего адреса (неважно какого),
+                // чтобы система выбрала активный сетевой интерфейс
+                socket.connect(new InetSocketAddress("8.8.8.8", 80), 500);
+                return socket.getLocalAddress().getHostAddress();
+            }
+        } catch (Exception e) {
+            return "127.0.0.1"; // Если интернета нет вообще
+        }
     }
 
     // Кнопка "Позвонить по IP"
@@ -72,7 +82,7 @@ public class Laba8Controller {
         String ip = UserIp.getText().trim();
         String portStr = UserPort.getText().trim();
         if (!ip.isEmpty() && !portStr.isEmpty()) {
-            initiateCall(ip, Integer.parseInt(portStr), "Unknown");
+            initiateCall(ip, Integer.parseInt(portStr));
         }
     }
 
@@ -81,7 +91,7 @@ public class Laba8Controller {
     public void onCallButtonClick() {
         Peer selected = userListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            initiateCall(selected.getIp(), selected.getPort(), selected.getNickname());
+            initiateCall(selected.getIp(), selected.getPort());
         }
     }
 

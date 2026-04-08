@@ -7,10 +7,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Consumer;
 
-public class SignalingServer implements Runnable{
+public class SignalingServer implements Runnable {
     private final int port;
     private final Consumer<String> onMessageReceived;
     private volatile boolean running = true;
+
     public SignalingServer(int port, Consumer<String> onMessageReceived) {
         this.port = port;
         this.onMessageReceived = onMessageReceived;
@@ -18,6 +19,7 @@ public class SignalingServer implements Runnable{
 
     @Override
     public void run() {
+        // null в ServerSocket означает прослушивание всех сетевых интерфейсов (0.0.0.0)
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (running) {
                 try (Socket clientSocket = serverSocket.accept();
@@ -28,11 +30,11 @@ public class SignalingServer implements Runnable{
                         onMessageReceived.accept(message);
                     }
                 } catch (IOException e) {
-                    System.err.println("Ошибка при приеме соединения: " + e.getMessage());
+                    if (running) System.err.println("Ошибка TCP: " + e.getMessage());
                 }
             }
         } catch (IOException e) {
-            System.err.println("Не удалось запустить сервер: " + e.getMessage());
+            System.err.println("Не удалось открыть порт " + port);
         }
     }
 
